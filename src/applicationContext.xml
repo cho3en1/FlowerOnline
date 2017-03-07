@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd" xmlns:tx="http://www.springframework.org/schema/tx">
+
+
+	<bean id="dataSource"
+		class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver"></property>
+		<property name="url"
+			value="jdbc:mysql://localhost:3306/jkxyshsflower?useUnicode=true&amp;characterEncoding=utf-8">
+		</property>
+		<property name="username" value="root"></property>
+	</bean>
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		<property name="dataSource">
+			<ref bean="dataSource" />
+		</property>
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">
+					org.hibernate.dialect.MySQLDialect
+				</prop>
+			</props>
+		</property>
+		<property name="mappingResources">
+			<list>
+				<value>io/github/cho3en1/model/Flower.hbm.xml</value>
+				<value>io/github/cho3en1/model/Orderitem.hbm.xml</value>
+				<value>io/github/cho3en1/model/Guashi.hbm.xml</value>
+				<value>io/github/cho3en1/model/Orders.hbm.xml</value>
+				<value>io/github/cho3en1/model/User.hbm.xml</value>
+				<value>io/github/cho3en1/model/Catalog.hbm.xml</value>
+				<value>
+					io/github/cho3en1/model/Userdetail.hbm.xml
+				</value></list>
+		</property></bean>
+	<bean id="transactionManager"
+		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	<tx:annotation-driven transaction-manager="transactionManager" />
+	
+	<bean id="catalogDAO" class="io.github.cho3en1.dao.impl.CatalogDAO">
+		<property name="sessionFactory">
+			<ref bean="sessionFactory" />
+		</property>
+	</bean>
+	<bean id="catalogService" class="io.github.cho3en1.service.impl.CatalogService">
+		<property name="catalogDAO">
+			<ref bean="catalogDAO" />
+		</property>
+	</bean>
+	
+	<bean id="flowerDAO" class="io.github.cho3en1.dao.impl.FlowerDAO">
+		<property name="sessionFactory">
+			<ref bean="sessionFactory" />
+		</property>
+	</bean>
+	<bean id="flowerService" class="io.github.cho3en1.service.impl.FlowerService">
+		<property name="flowerDAO">
+			<ref bean="flowerDAO" />
+		</property>
+	</bean>
+	
+	<bean id="flowerAction" class="io.github.cho3en1.action.FlowerAction">
+		<property name="catalogService">
+			<ref bean="catalogService" />
+		</property>
+		<property name="flowerService">
+			<ref bean="flowerService"/>
+		</property>
+	</bean>
+	
+	<bean id="userDAO" class="io.github.cho3en1.dao.impl.UserDAO">
+		<property name="sessionFactory">
+			<ref bean="sessionFactory" />
+		</property>
+	</bean>
+	<bean id="userService" class="io.github.cho3en1.service.impl.UserService">
+		<property name="userDAO">
+			<ref bean="userDAO" />
+		</property>
+	</bean>
+	<bean id="userAction" class="io.github.cho3en1.action.userAction">
+		<property name="userService">
+			<ref bean="userService" />
+		</property>
+	</bean>
+	<bean id="shoppingAction" class="io.github.cho3en1.action.shoppingAction">
+		<property name="flowerService">
+			<ref bean="flowerService" />
+		</property>
+	</bean>
+	<bean id="orderDAO" class="io.github.cho3en1.dao.impl.OrderDAO">
+ 		<property name="sessionFacory">
+ 			<ref bean="sessionFactory" />
+ 		</property>
+ 	</bean>
+ 	<bean id="orderService" class="io.github.cho3en1.service.impl.OrderService">
+ 		<property name="orderDAO">
+ 			<ref bean="orderDAO" />
+ 		</property>
+ 	</bean>
+ 	<bean id="orderAction" class="io.github.cho3en1.action.orderAction">
+ 		<property name="orderService">
+ 			<ref bean="orderService" />
+ 		</property>
+ 	</bean>
+	</beans>
